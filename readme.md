@@ -136,7 +136,9 @@ Donde:
 - **ServerName:** asignamos el nombre de dominio base.
 - **ServerAlias:** especifica el nombre del subdominio.
 ~~~
+
 # Protocolo HTTPS
+
 Primero realizo el comando para crear las claves y si queremos que se creen los archivos en una ruta que qreramos le cambiamos el path y estaria:
 sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
 
