@@ -135,3 +135,24 @@ Donde:
 - **DocumentRoot:** asignamos la ruta de la carpeta que contiene el index correspondiente.
 - **ServerName:** asignamos el nombre de dominio base.
 - **ServerAlias:** especifica el nombre del subdominio.
+~~~
+Protocolo HTTPS
+Primero realizo el comando para crear las claves y si queremos que se creen los archivos en una ruta que qreramos le cambiamos el path y estaria:
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+
+Cuando se haya ejecutado, utilizamos el comando cp .key o .crt contenedor:ruta volumen
+sudo docker cp apache-selfsigned.key asir_webb:/usr/local/apache2/conf
+docker cp apache-selfsigned.crt asir_webb:/usr/local/apache2/conf
+
+Despues, inspeccionar el volumen, tenemos que entrar en el archivo httpd-ssl.conf y en required modules vamos viendo copiando y viendo en httpd.conf las lineas que tenemos que descomentar para que nos funcione el htpps.
+
+Configuramos el virtual host asi:
+<VirtualHost default:443>
+DocumentRoot "/usr/local/apache2/htdocs/adios"
+ServerName adios.prueba.com
+ServerAdmin you@example.com
+ErrorLog /proc/self/fd/2
+TransferLog /proc/self/fd/1
+SSLEngine on
+SSLCertificateFile "/usr/local/apache2/conf/server.crt"
+SSLCertificateKeyFile "/usr/local/apache2/conf/server.key
