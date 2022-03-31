@@ -1,0 +1,65 @@
+version: "3.3"
+services:
+  apache_web:
+    container_name: apache_server_practica
+    image: httpd
+    networks:
+      br02:
+        ipv4_address: 10.1.0.4
+    ports:
+      - 80:80
+    volumes:
+      - apache_index:/usr/local/apache2/htdocs
+      - apache_conf:/usr/local/apache2/conf
+  apache_cliente:
+    image: kasmweb/desktop:1.10.0-rolling
+    networks:
+      br02:
+    stdin_open: true  # docker run -i
+    tty: true         # docker run -t
+    environment:
+      VNC_PW: password
+    ports:
+      - 6901:6901
+    dns:
+      - 10.1.0.40
+  server_dns_practica:
+    image: internetsystemsconsortium/bind9:9.16
+    networks:
+      br02:
+        ipv4_address: 10.1.0.40
+    ports:
+      - 53:53
+    volumes:
+      - conf:/etc/bind
+  wireshark:
+    image: linuxserver/wireshark:latest
+    container_name: wireshark
+    cap_add:
+      - NET_ADMIN
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/London
+    volumes:
+      - config_wireshark:/config
+    ports:
+      - 3000:3000 #optional
+    restart: unless-stopped
+volumes:
+  apache_index:
+    external: true
+    name: apache-data-practica
+  apache_conf:
+    external: true
+    name: apache-conf-practica1
+  conf:
+    external: true
+    name: dns-main_conf
+  config_wireshark:
+    external: true
+    name: wireshark_config
+networks: 
+  br02:
+    external: true
